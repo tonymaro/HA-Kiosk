@@ -19,10 +19,9 @@
 #
 ##########################################
 
-PLAYLIST = "$HOME/Slideshow/"
+PLAYLIST="$HOME/Slideshow/"
 
 export DISPLAY=:0
-# make sure screen is on
 
 # Just in case it's already running:
 killall mpv
