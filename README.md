@@ -40,6 +40,7 @@ own authentication method if you want authentication on the REST API calls.
 # How do I get started?
 This expects a few things:
 * Home Assistant up and running (duh!  lol)
+* Voice control of HA
 * A Linux Mint Xfce-based installation.  I chose Xfce due to it being lightweight / smaller and we don't really need much of a desktop GUI.
 * Firefox, ffmpeg, and mpv installed on the Linux machine.
 * A static private IP on the Linux machine, or a valid internal DNS name that will always reference it.
