@@ -1,2 +1,2 @@
 #!/bin/bash
-nohup /usr/bin/python /home/tony/rest/restserver.py &
+nohup /usr/bin/python ~/REST/restserver.py &
