@@ -19,7 +19,7 @@
 #
 ##########################################
 
-PLAYLIST = "$HOME/Slideshow/halloween/"
+PLAYLIST = "$HOME/Slideshow/"
 
 export DISPLAY=:0
 # make sure screen is on
