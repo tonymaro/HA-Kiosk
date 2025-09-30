@@ -84,6 +84,7 @@ Feel free to disable any default startup applications of things you won't need. 
 
 ### Configure the Roku
 Set your Roku TV on a static IP.  Assign the name "Computer" to HDMI1 input (or don't and change the automations.)
+Set the default Roku TV input to the HDMI1, now called "Computer"  That way every time it's turned on, it will start at the dashboard.
 Set the options on the Roku to network permissive for control.  Again, having it on a VLAN along with the Kiosk PC is recommended.
 Set up the Roku integration in HA.
 
@@ -94,6 +95,9 @@ Feel free to edit that schedule as you see fit.  My Kiosk is configured to turn 
 # Setup your scripts and automations in HA
 I've tried to put as many of the options and such into HA to make it easier to edit this on the fly without having to restart HA or the like.
 
+# Set up a dashboard for the Kiosk
+Create a new non-admin user in HA for the Kiosk to login as, and login from the Kiosk PC as that user and save the password in the browser.  I recommend enabling 2FA on the account.
+Create a new dashboard to display whatever you'd like to see.  Install the "browser_mod" integration in HA and configure the user that logs in from the Kiosk to hide the header/sidebar.  This will give a very clean "kiosk" mode.  Be sure that the path in the startup application for Firefox that gets opened on the Kiosk PC matches the path to the new dashboard.
 
 ## configuration.yaml
 You will need to modify your configuration.yaml file on the HA server to add the following code.  Substitute the IP address of the new Linux Kiosk PC:
@@ -114,13 +118,110 @@ rest_command:
 Now, restart your Home Assistant server or otherwise reload your configuration.
 
 ## Helper script for the TV control
-You'll need to 
+You'll need to create a script (under Settings/Automations & Scenes/Scripts called "Ensure Kiosk On"
+
+I believe all of this script can be done in the GUI but I'll post both a screenshot and the YAML I use:
+![script-screenshot](ensure-kiosk-on.png)
+
+```yaml
+sequence:
+  - if:
+      - condition: device
+        type: is_off
+        device_id: 7b75a14e9977927a64bf24a7038b79f4
+        entity_id: 1c5f3a09bb55b87967bbef7c695a7b8f
+        domain: remote
+    then:
+      - type: turn_on
+        device_id: 7b75a14e9977927a64bf24a7038b79f4
+        entity_id: 1c5f3a09bb55b87967bbef7c695a7b8f
+        domain: remote
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
+  - if:
+      - condition: state
+        state: Computer
+        entity_id: media_player.32_kitchen_kiosk
+        attribute: source
+    then: []
+    else:
+      - action: media_player.select_source
+        metadata: {}
+        data:
+          source: Computer
+        target:
+          device_id: 7b75a14e9977927a64bf24a7038b79f4
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
+alias: Ensure Kiosk On
+description: ""
+```
+
+The above script simplifies the automations that you will create.
 
 ## Configure a few automations
 Here's some example YAML, but you can use the GUI entirely for configuration except for when entering the REST API call parameters:
 
-First, this works from my Amcrest integration when the doorbell sees a human being.  You will need to supply your own RTSP URL for your front door camera to use this.
-It also uses a notification group I created called "notify_tony" that points to my current cellphone for pinging it as well.  More an example than anything you could copy/paste and use:
+First, you'll need two automations for handling the physical rotation of the TV.  Be sure you're picking your own Roku device and not trying to paste in my device_id:
+```yaml
+alias: Kiosk Rotate to Dashboard
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.kiosk_tilt_window_door_is_closed_2
+    from: "off"
+    to: "on"
+conditions: []
+actions:
+  - action: script.ensure_kiosk_on_input
+    metadata: {}
+    data: {}
+  - action: remote.send_command
+    metadata: {}
+    data:
+      command: input_hdmi1
+    target:
+      device_id: 7b75a14e9977927a64bf24a7038b79f4
+  - action: rest_command.kiosk_rest
+    metadata: {}
+    data:
+      script: dashboard
+      arg1: ""
+      arg2: ""
+mode: single
+```
+
+```yaml
+alias: Kiosk Rotate to Roku
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.kiosk_tilt_window_door_is_closed_2
+    from: "on"
+    to: "off"
+conditions: []
+actions:
+  - action: remote.send_command
+    metadata: {}
+    data:
+      command: home
+    target:
+      device_id: 7b75a14e9977927a64bf24a7038b79f4
+mode: single
+```
+
+
+This automation works from my Amcrest integration when the doorbell sees a human being.  You will need to supply your own RTSP URL for your front door camera to use this.
+It also uses a notification group I created called "notify_tony" that points to my current cellphone for pinging it as well.  More an example than anything you could copy/paste and use.
+The "Door" script name passed in the Rest signifies for it to look under ~/Videos/Door/ and play a random video file for the avatar.
 ```yaml
 alias: Doorbell Human
 description: ""
@@ -150,3 +251,107 @@ actions:
         ttl: 0
         priority: high
 ```
+
+This one will cause the Kiosk to stop whatever it's doing and show the dashboard:
+```yaml
+alias: Show Dashboard Command
+description: ""
+triggers:
+  - trigger: conversation
+    command:
+      - show dashboard
+      - display dashboard
+      - show dashboard please
+      - display dashboard please
+      - dashboard
+conditions: []
+actions:
+  - action: script.ensure_kiosk_on_input
+    metadata: {}
+    data: {}
+  - action: rest_command.kiosk_rest
+    metadata: {}
+    data:
+      script: dashboard
+mode: single
+```
+This one will activate "nightlight" mode where it keeps the screen on all night playing a slideshow:
+```yaml
+alias: Nightlight mode
+description: ""
+triggers:
+  - trigger: conversation
+    command:
+      - nightlight please
+      - nightlight
+      - nightlight mode
+      - the kids are here
+conditions: []
+actions:
+  - action: script.ensure_kiosk_on_input
+    metadata: {}
+    data: {}
+  - action: rest_command.kiosk_rest
+    metadata: {}
+    data:
+      script: nightlight
+      args1: ""
+      args2: ""
+mode: single
+```
+And you can get a bit more complicated.  The "playavatar" call will trigger the kiosk to play a given avatar video.  For instance, one that announces a garage door has been left open.  The second condition and the action are related to turning on the Kiosk display if it's currently off.
+```yaml
+alias: Garage Door Left Open Announcement
+description: ""
+triggers:
+  - to: open
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    entity_id: cover.nissan
+    trigger: state
+  - trigger: state
+    entity_id:
+      - cover.volvo
+    to: open
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+conditions:
+  - condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+      - condition: device
+        type: is_off
+        device_id: 7b75a14e9977927a64bf24a7038b79f4
+        entity_id: 1c5f3a09bb55b87967bbef7c695a7b8f
+        domain: remote
+actions:
+  - type: turn_on
+    device_id: 7b75a14e9977927a64bf24a7038b79f4
+    entity_id: 1c5f3a09bb55b87967bbef7c695a7b8f
+    domain: remote
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - action: rest_command.kiosk_rest
+    metadata: {}
+    data:
+      script: playavatar
+      args1: Garage
+  - action: script.notify_volvo_door
+    metadata: {}
+    data:
+      title: "{{ trigger.to_state.attributes.friendly_name }} opened"
+      message: Would you like to close it?
+      entity_id: "{{ trigger.entity_id }}"
+mode: single
+```
+
+Detect when the Kiosk is rotated using the window/door contact sensor:
