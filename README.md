@@ -365,3 +365,4 @@ mode: single
 * rotate_roku:  Triggers that we are rotating to the Roku TV mode / landscape mode.
 * rotate_dashboard:  Triggers rotating back to the dashboard portrait mode.
 
+Note that the nightlight mode script is still a short hack without the random avatar selection and has a hardcoded path to the slideshow to use.  Feel free to modify.
