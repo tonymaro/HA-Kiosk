@@ -65,6 +65,9 @@ This expects a few things:
 * Optionally, a window/door contact sensor that works in your HA.  This is used to detect screen orientation.
 * A decent amount of both HA and Linux experience.
 
+## Avatar video AI generation
+I created my videos of the anthropomorphic fox in portrait mode using the low quality (cheap) output option from https://app.heygen.com/ and then upscaled to 1080x1920 and sharpened with Handbrake.
+
 ## Hardware I used:
 * A PC.  I used one of these, but notice it's ethernet only, no wifi.  You may need something with wifi:  https://www.amazon.com/dp/B07FKMJGD6
 * A wireless HDMI transmitter pair.  I went with 2 receivers:   https://www.amazon.com/dp/B0DKK4ZN44
