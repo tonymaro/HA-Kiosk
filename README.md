@@ -61,7 +61,7 @@ I recommend a fresh install of Linux Mint Xfce.  There's a few tweaks to make:
 * Setup a single user account on this and configure it to auto-login as that user without a password needed
 * DO set a password for the user - that will help protect the "root" access.
 * Install the following: 
-   `sudo apt-get install ffmpeg mpv firefox`
+   `sudo apt install ffmpeg mpv firefox python python3 python3-flask python-is-python3 python3-pip python3-validators`
 * Place all the files from this project into the home directory of your user, retaining the folder tree.  Aka, you'll have ~/Scripts/ once done.
 
 ### Startup Applications
@@ -354,4 +354,14 @@ actions:
 mode: single
 ```
 
-Detect when the Kiosk is rotated using the window/door contact sensor:
+# Possible REST API commands
+* playstream: This will play a random Avatar video from the specified folder, followed by a camera RTSP stream for 20 seconds.  Pass the avatar folder and the RTSP URL in args1 and args2.
+* playavatar:  This will play a random Avatar video from the specified folder.
+* dashboard:  Stops everything and displays the dashboard.
+* noscreen: Used by HA when turning off the TV for the night.
+* start_slideshow: Start the slideshow screensaver.
+* nightlight: Trigger the nightlight mode slideshow/screensaver.
+* listening:  Hides everything and shows the desktop briefly to be used during voice recognition as feedback.  I placed a static image of my AI avatar as the desktop wallpaper.
+* rotate_roku:  Triggers that we are rotating to the Roku TV mode / landscape mode.
+* rotate_dashboard:  Triggers rotating back to the dashboard portrait mode.
+
