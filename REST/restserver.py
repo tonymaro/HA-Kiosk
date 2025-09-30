@@ -24,6 +24,8 @@ scripts = {
 
 # Functions to sanitize the parameters passed
 def sanitize_directory_name(dir_name):
+    if not (dir_name):
+        return ""
     if len(dir_name) > 255:
         raise ValueError("Directory name too long")
     if not re.match(r'^[\w-]+$', dir_name):
