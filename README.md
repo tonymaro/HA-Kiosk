@@ -119,8 +119,6 @@ I've tried to put as many of the options and such into HA to make it easier to e
 Create a new non-admin user in HA for the Kiosk to login as, and login from the Kiosk PC as that user and save the password in the browser.  I recommend enabling 2FA on the account.
 Create a new dashboard to display whatever you'd like to see.  Install the "browser_mod" integration in HA and configure the user that logs in from the Kiosk to hide the header/sidebar.  This will give a very clean "kiosk" mode.  Be sure that the path in the startup application for Firefox that gets opened on the Kiosk PC matches the path to the new dashboard.
 
-![script-screenshot](img3.jpg)
-
 ## configuration.yaml
 You will need to modify your configuration.yaml file on the HA server to add the following code.  Substitute the IP address of the new Linux Kiosk PC:
 
