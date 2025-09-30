@@ -11,15 +11,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Define your shell scripts and their corresponding endpoints
 scripts = {
-    "playstream": "~/scripts/choosestream.sh",
-    "playavatar": "~/scripts/playavatar.sh",
-    "dashboard": "~/scripts/dashboard.sh",
-    "noscreen": "~/scripts/noscreen.sh",
-    "start_slideshow": "~/scripts/start_slideshow.sh",
-    "nightlight":"~/scripts/nightlight.sh",
-    "listening":"~/scripts/play_listening.sh",
-    "rotate_roku":"~/scripts/rotate_roku.sh",
-    "rotate_dashboard":"~/scripts/rotate_dashboard.sh"
+    "playstream": "~/Scripts/choosestream.sh",
+    "playavatar": "~/Scripts/playavatar.sh",
+    "dashboard": "~/Scripts/dashboard.sh",
+    "noscreen": "~/Scripts/noscreen.sh",
+    "start_slideshow": "~/Scripts/start_slideshow.sh",
+    "nightlight":"~/Scripts/nightlight.sh",
+    "listening":"~/Scripts/play_listening.sh",
+    "rotate_roku":"~/Scripts/rotate_roku.sh",
+    "rotate_dashboard":"~/Scripts/rotate_dashboard.sh"
 }
 
 # Functions to sanitize the parameters passed
