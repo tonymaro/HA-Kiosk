@@ -8,6 +8,8 @@ This work is licensed under a
 
 [![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
 
+![script-screenshot](img4.jpg) ![script-screenshot](img2.jpg)
+
 [cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
 [cc-by-nc-image]: https://licensebuttons.net/l/by-nc/4.0/88x31.png
 [cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
@@ -25,10 +27,24 @@ on the assumption it will only run within a private segregated environment of yo
 interference.
 
 # What is it?
+
+![script-screenshot](img3.jpg) ![script-screenshot](img1.jpg)
+
 This project contains a REST API application written in Python, and a series of bash scripts that it calls
 to perform various actions.  It's designed to be called by Home Assistant automations to give you more
 control over a PC running a dashboard.  The concept is to have a display screen and use automations and HA Voice for control,
 not to install a huge touchscreen.
+
+***Features:***
+HA Automations will be able to:
+* play full screen videos of the Avatar saying something on the Kiosk (videos not included)
+* play a full screen avatar video followed by a camera RTSP stream for a timeperiod
+* Manage power and inputs on the Roku TV in relation to these acts
+* Play a slideshow screensaver
+* Act as a nightlight at night with a special screensaver mode
+
+***Why have just text to speech for common things when your house can have an avatar?***
+I suspect within a few months to a year it'll be trivial to replace the hard coded videos with realtime generated AI videos of the house avatar.
 
 I recommend you do what I do and run the Kiosk machine with this code on a VLAN
 that does not have Internet access and can only reach your HA installation and cameras.  It's a best practice to
@@ -99,6 +115,8 @@ I've tried to put as many of the options and such into HA to make it easier to e
 # Set up a dashboard for the Kiosk
 Create a new non-admin user in HA for the Kiosk to login as, and login from the Kiosk PC as that user and save the password in the browser.  I recommend enabling 2FA on the account.
 Create a new dashboard to display whatever you'd like to see.  Install the "browser_mod" integration in HA and configure the user that logs in from the Kiosk to hide the header/sidebar.  This will give a very clean "kiosk" mode.  Be sure that the path in the startup application for Firefox that gets opened on the Kiosk PC matches the path to the new dashboard.
+
+![script-screenshot](img3.jpg)
 
 ## configuration.yaml
 You will need to modify your configuration.yaml file on the HA server to add the following code.  Substitute the IP address of the new Linux Kiosk PC:
