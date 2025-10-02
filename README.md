@@ -1,5 +1,5 @@
 # HA-Kiosk
-Scripts and options to run an AI avatar with a dashboard in Kiosk mode on Linux
+Scripts and options to run an AI avatar with a dashboard in Kiosk mode on Linux for https://www.home-assistant.io
 
 Shield: [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 
