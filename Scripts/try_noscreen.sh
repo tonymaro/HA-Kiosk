@@ -25,32 +25,48 @@
 
 # ip of your Roku TV:
 ROKU_IP="192.168.5.186"
+CHECKFILE="$HOME/scripts/lasttouch.txt"
 
 export DISPLAY=:0
+ROKU_ON=TRUE
 
-# If we are in Roku TV mode, don't do this
-CURLOUT=$(curl -s "$ROKU_IP:8060/query/active-app" 2>/dev/null)
+# If we are in Roku TV mode, don't do anything
+CURLOUT=$(curl -s "$ROKU_IP:8060/query/device-info" 2>/dev/null)
+if echo "$CURLOUT" | grep -1 "power-mode>PowerOn"; then
+	# The TV is powered on
+	CURLOUT=$(curl -s "$ROKU_IP:8060/query/active-app" 2>/dev/null)
+	ROKU_ON=TRUE
 
-if ! echo "$CURLOUT" | grep -1 "tvinput.hdmi1"; then
-        echo "Roku is ative"
-        exit;
+	if ! echo "$CURLOUT" | grep -1 "tvinput.hdmi1"; then
+		# the TV is NOT on HDMI1 input, must be watching a movie
+	        exit;
+	fi
+else
+	ROKU_ON=FALSE
 fi
 
-
-
-# If we are in nightlight mode don't do this
-if [ -f ~/scripts/nightlight.txt ]; then
+if [ -f "$CHECKFILE" ]; then
+	# In nightlight mode, make sure it's on and the slideshow is running
 	# see if mpv is running, if not restart it
+	# If Roku is off, turn it on
+	if [ "$ROKU_ON" = "FALSE" ]; then
+		# Turn on the Roku
+	        POWER_ON_URL="http://$ROKU_IP:8060/keypress/PowerOn"
+	        curl -X POST "$POWER_ON_URL"
+	        echo "Powered on"
+	        sleep 3
+	fi
+
 	if ! pgrep -x "mpv" > /dev/null; then
 		echo "Restarting mpv"
 		SLIDESHOW="$HOME/Slideshow/nightlight/"
 		/usr/bin/mpv -fs --shuffle --image-display-duration=240 --loop-playlist $SLIDESHOW &
-		exit;
+		exit
 	fi
+	# MPV is already running
+	exit
 fi
 
-
-CHECKFILE="$HOME/scripts/lasttouch.txt"
 
 CURRENT_TIME=$(date +%s)
 LAST_MODIFIED_TIME=$(stat -c %Y "$CHECKFILE")
@@ -61,6 +77,7 @@ DIFF_TIME=$((CURRENT_TIME - LAST_MODIFIED_TIME))
 # 900 = 15 minutes
 if [ "$DIFF_TIME" -lt 900 ]; then
         # Do nothing, have recently taken action so leave it on for now
+	# this ensures dashboard shows a bit after some event
          exit
 fi
 
