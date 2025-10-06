@@ -26,6 +26,7 @@
 # ip of your Roku TV:
 ROKU_IP="192.168.5.186"
 CHECKFILE="$HOME/scripts/lasttouch.txt"
+CHECKNIGHT="$HOME/scripts/nightlight.txt"
 
 export DISPLAY=:0
 ROKU_ON=TRUE
@@ -34,6 +35,7 @@ ROKU_ON=TRUE
 CURLOUT=$(curl -s "$ROKU_IP:8060/query/device-info" 2>/dev/null)
 if echo "$CURLOUT" | grep -1 "power-mode>PowerOn"; then
 	# The TV is powered on
+	echo "TV on"
 	CURLOUT=$(curl -s "$ROKU_IP:8060/query/active-app" 2>/dev/null)
 	ROKU_ON=TRUE
 
@@ -45,7 +47,8 @@ else
 	ROKU_ON=FALSE
 fi
 
-if [ -f "$CHECKFILE" ]; then
+if [ -f "$CHECKNIGHT" ]; then
+	echo "*** NIGHTLIGHT file exists at $CHECKFILE ***"
 	# In nightlight mode, make sure it's on and the slideshow is running
 	# see if mpv is running, if not restart it
 	# If Roku is off, turn it on
